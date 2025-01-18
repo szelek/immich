@@ -5,8 +5,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/entities/asset.entity.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/providers/app_settings.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/current_asset.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/is_motion_video_playing.provider.dart';
@@ -74,7 +75,7 @@ class NativeVideoViewerPage extends HookConsumerWidget {
         }
 
         // Use a network URL for the video player controller
-        final serverEndpoint = Store.get(StoreKey.serverEndpoint);
+        final serverEndpoint = Store.I.get(StoreKey.serverEndpoint);
         final isOriginalVideo = ref
             .read(appSettingsServiceProvider)
             .getSetting<bool>(AppSettingsEnum.loadOriginalVideo);

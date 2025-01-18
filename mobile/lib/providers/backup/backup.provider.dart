@@ -5,30 +5,31 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/entities/album.entity.dart';
+import 'package:immich_mobile/entities/backup_album.entity.dart';
 import 'package:immich_mobile/interfaces/album_media.interface.dart';
 import 'package:immich_mobile/interfaces/backup.interface.dart';
 import 'package:immich_mobile/interfaces/file_media.interface.dart';
+import 'package:immich_mobile/models/auth/auth_state.model.dart';
 import 'package:immich_mobile/models/backup/available_album.model.dart';
-import 'package:immich_mobile/entities/backup_album.entity.dart';
 import 'package:immich_mobile/models/backup/backup_candidate.model.dart';
 import 'package:immich_mobile/models/backup/backup_state.model.dart';
 import 'package:immich_mobile/models/backup/current_upload_asset.model.dart';
 import 'package:immich_mobile/models/backup/error_upload_asset.model.dart';
 import 'package:immich_mobile/models/backup/success_upload_asset.model.dart';
+import 'package:immich_mobile/models/server_info/server_disk_info.model.dart';
+import 'package:immich_mobile/providers/app_life_cycle.provider.dart';
+import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/backup/error_backup_list.provider.dart';
+import 'package:immich_mobile/providers/db.provider.dart';
+import 'package:immich_mobile/providers/gallery_permission.provider.dart';
 import 'package:immich_mobile/repositories/album_media.repository.dart';
 import 'package:immich_mobile/repositories/backup.repository.dart';
 import 'package:immich_mobile/repositories/file_media.repository.dart';
 import 'package:immich_mobile/services/background.service.dart';
 import 'package:immich_mobile/services/backup.service.dart';
-import 'package:immich_mobile/models/auth/auth_state.model.dart';
-import 'package:immich_mobile/providers/auth.provider.dart';
-import 'package:immich_mobile/providers/gallery_permission.provider.dart';
-import 'package:immich_mobile/models/server_info/server_disk_info.model.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
-import 'package:immich_mobile/providers/app_life_cycle.provider.dart';
-import 'package:immich_mobile/providers/db.provider.dart';
 import 'package:immich_mobile/services/server_info.service.dart';
 import 'package:immich_mobile/utils/backup_progress.dart';
 import 'package:immich_mobile/utils/diff.dart';
@@ -60,12 +61,12 @@ class BackupNotifier extends StateNotifier<BackUpState> {
             progressInFileSpeedUpdateTime: DateTime.now(),
             progressInFileSpeedUpdateSentBytes: 0,
             cancelToken: CancellationToken(),
-            autoBackup: Store.get(StoreKey.autoBackup, false),
-            backgroundBackup: Store.get(StoreKey.backgroundBackup, false),
-            backupRequireWifi: Store.get(StoreKey.backupRequireWifi, true),
+            autoBackup: Store.I.get(StoreKey.autoBackup, false),
+            backgroundBackup: Store.I.get(StoreKey.backgroundBackup, false),
+            backupRequireWifi: Store.I.get(StoreKey.backupRequireWifi, true),
             backupRequireCharging:
-                Store.get(StoreKey.backupRequireCharging, false),
-            backupTriggerDelay: Store.get(StoreKey.backupTriggerDelay, 5000),
+                Store.I.get(StoreKey.backupRequireCharging, false),
+            backupTriggerDelay: Store.I.get(StoreKey.backupTriggerDelay, 5000),
             serverInfo: const ServerDiskInfo(
               diskAvailable: "0",
               diskSize: "0",
@@ -157,7 +158,7 @@ class BackupNotifier extends StateNotifier<BackUpState> {
   }
 
   void setAutoBackup(bool enabled) {
-    Store.put(StoreKey.autoBackup, enabled);
+    Store.I.put(StoreKey.autoBackup, enabled);
     state = state.copyWith(autoBackup: enabled);
   }
 
@@ -202,13 +203,14 @@ class BackupNotifier extends StateNotifier<BackUpState> {
             triggerMaxDelay: state.backupTriggerDelay * 10,
           );
       if (success) {
-        await Store.put(StoreKey.backupRequireWifi, state.backupRequireWifi);
-        await Store.put(
+        await Store.I.put(StoreKey.backupRequireWifi, state.backupRequireWifi);
+        await Store.I.put(
           StoreKey.backupRequireCharging,
           state.backupRequireCharging,
         );
-        await Store.put(StoreKey.backupTriggerDelay, state.backupTriggerDelay);
-        await Store.put(StoreKey.backgroundBackup, state.backgroundBackup);
+        await Store.I
+            .put(StoreKey.backupTriggerDelay, state.backupTriggerDelay);
+        await Store.I.put(StoreKey.backgroundBackup, state.backgroundBackup);
       } else {
         state = state.copyWith(
           backgroundBackup: wasEnabled,
@@ -424,8 +426,8 @@ class BackupNotifier extends StateNotifier<BackUpState> {
     final isEnabled = await _backgroundService.isBackgroundBackupEnabled();
 
     state = state.copyWith(backgroundBackup: isEnabled);
-    if (isEnabled != Store.get(StoreKey.backgroundBackup, !isEnabled)) {
-      Store.put(StoreKey.backgroundBackup, isEnabled);
+    if (isEnabled != Store.I.get(StoreKey.backgroundBackup, !isEnabled)) {
+      Store.I.put(StoreKey.backgroundBackup, isEnabled);
     }
 
     if (state.backupProgress != BackUpProgressEnum.inBackground) {
@@ -651,7 +653,7 @@ class BackupNotifier extends StateNotifier<BackUpState> {
 
   Future<void> _resumeBackup() async {
     // Check if user is login
-    final accessKey = Store.tryGet(StoreKey.accessToken);
+    final accessKey = Store.I.tryGet(StoreKey.accessToken);
 
     // User has been logged out return
     if (accessKey == null || !_authState.isAuthenticated) {

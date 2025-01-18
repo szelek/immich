@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/models/search/search_curated_content.model.dart';
 import 'package:immich_mobile/widgets/search/search_map_thumbnail.dart';
 import 'package:immich_mobile/widgets/search/thumbnail_with_info.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
 
 class CuratedPlacesRow extends StatelessWidget {
   const CuratedPlacesRow({
@@ -45,7 +46,7 @@ class CuratedPlacesRow extends StatelessWidget {
           final actualIndex = index - actualContentIndex;
           final object = content[actualIndex];
           final thumbnailRequestUrl =
-              '${Store.get(StoreKey.serverEndpoint)}/assets/${object.id}/thumbnail';
+              '${Store.I.get(StoreKey.serverEndpoint)}/assets/${object.id}/thumbnail';
           return SizedBox.square(
             dimension: imageSize,
             child: ThumbnailWithInfo(

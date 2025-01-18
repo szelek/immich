@@ -2,17 +2,17 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:immich_mobile/providers/image/cache/image_loader.dart';
-import 'package:immich_mobile/providers/image/cache/remote_image_cache_manager.dart';
-import 'package:openapi/api.dart' as api;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
-import 'package:immich_mobile/services/app_settings.service.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/entities/asset.entity.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/providers/image/cache/image_loader.dart';
+import 'package:immich_mobile/providers/image/cache/remote_image_cache_manager.dart';
+import 'package:immich_mobile/services/app_settings.service.dart';
 import 'package:immich_mobile/utils/image_url_builder.dart';
+import 'package:openapi/api.dart' as api;
 
 /// The remote image provider for full size remote images
 class ImmichRemoteImageProvider
@@ -52,14 +52,14 @@ class ImmichRemoteImageProvider
   }
 
   /// Whether to show the original file or load a compressed version
-  bool get _useOriginal => Store.get(
-        AppSettingsEnum.loadOriginal.storeKey,
+  bool get _useOriginal => Store.I.get(
+        StoreKey.loadOriginal,
         AppSettingsEnum.loadOriginal.defaultValue,
       );
 
   /// Whether to load the preview thumbnail first or not
-  bool get _loadPreview => Store.get(
-        AppSettingsEnum.loadPreview.storeKey,
+  bool get _loadPreview => Store.I.get(
+        StoreKey.loadPreview,
         AppSettingsEnum.loadPreview.defaultValue,
       );
 

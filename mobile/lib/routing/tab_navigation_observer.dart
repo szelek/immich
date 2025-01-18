@@ -1,12 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/providers/memory.provider.dart';
-
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/entities/user.entity.dart';
 import 'package:immich_mobile/providers/api.provider.dart';
 import 'package:immich_mobile/providers/asset.provider.dart';
+import 'package:immich_mobile/providers/memory.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 
 class TabNavigationObserver extends AutoRouterObserver {
@@ -37,9 +37,9 @@ class TabNavigationObserver extends AutoRouterObserver {
           return;
         }
 
-        Store.put(
+        Store.I.put(
           StoreKey.currentUser,
-          User.fromUserDto(userResponseDto, userPreferences),
+          User.fromUserDto(userResponseDto, userPreferences).toDTO(),
         );
         ref.read(serverInfoProvider.notifier).getServerVersion();
       } catch (e) {

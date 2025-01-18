@@ -1,7 +1,8 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/entities/asset.entity.dart';
 import 'package:immich_mobile/entities/exif_info.entity.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/interfaces/asset_media.interface.dart';
 import 'package:photo_manager/photo_manager.dart' hide AssetType;
 
@@ -23,7 +24,7 @@ class AssetMediaRepository implements IAssetMediaRepository {
     final Asset asset = Asset(
       checksum: "",
       localId: local.id,
-      ownerId: Store.get(StoreKey.currentUser).isarId,
+      ownerId: Store.I.get(StoreKey.currentUser).dbId,
       fileCreatedAt: local.createDateTime,
       fileModifiedAt: local.modifiedDateTime,
       updatedAt: local.modifiedDateTime,

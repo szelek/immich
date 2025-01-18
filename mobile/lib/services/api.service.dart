@@ -4,11 +4,12 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:http/http.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/utils/url_helper.dart';
 import 'package:logging/logging.dart';
 import 'package:openapi/api.dart';
-import 'package:http/http.dart';
 
 class ApiService implements Authentication {
   late ApiClient _apiClient;
@@ -33,7 +34,7 @@ class ApiService implements Authentication {
   late StacksApi stacksApi;
 
   ApiService() {
-    final endpoint = Store.tryGet(StoreKey.serverEndpoint);
+    final endpoint = Store.I.tryGet(StoreKey.serverEndpoint);
     if (endpoint != null && endpoint.isNotEmpty) {
       setEndpoint(endpoint);
     }
@@ -71,7 +72,7 @@ class ApiService implements Authentication {
     setEndpoint(endpoint);
 
     // Save in local database for next startup
-    Store.put(StoreKey.serverEndpoint, endpoint);
+    Store.I.put(StoreKey.serverEndpoint, endpoint);
     return endpoint;
   }
 
@@ -151,7 +152,7 @@ class ApiService implements Authentication {
 
   void setAccessToken(String accessToken) {
     _accessToken = accessToken;
-    Store.put(StoreKey.accessToken, accessToken);
+    Store.I.put(StoreKey.accessToken, accessToken);
   }
 
   Future<void> setDeviceInfoHeader() async {
@@ -171,8 +172,8 @@ class ApiService implements Authentication {
   }
 
   static Map<String, String> getRequestHeaders() {
-    var accessToken = Store.get(StoreKey.accessToken, "");
-    var customHeadersStr = Store.get(StoreKey.customHeaders, "");
+    var accessToken = Store.I.get(StoreKey.accessToken, "");
+    var customHeadersStr = Store.I.get(StoreKey.customHeaders, "");
     var header = <String, String>{};
     if (accessToken.isNotEmpty) {
       header['x-immich-user-token'] = accessToken;

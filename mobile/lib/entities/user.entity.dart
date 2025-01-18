@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:immich_mobile/domain/dtos/user.dto.dart' as nu;
 import 'package:immich_mobile/entities/album.entity.dart';
 import 'package:immich_mobile/utils/hash.dart';
 import 'package:isar/isar.dart';
@@ -26,6 +27,21 @@ class User {
   });
 
   Id get isarId => fastHash(id);
+
+  nu.UserDto toDTO() => nu.UserDto(
+        dbId: isarId,
+        id: id,
+        name: name,
+        email: email,
+        isAdmin: isAdmin,
+        updatedAt: updatedAt,
+        avatarColor: avatarColor.toAvatarColor(),
+        profileImagePath: profileImagePath,
+        memoryEnabled: memoryEnabled,
+        inTimeline: inTimeline,
+        quotaSizeInBytes: quotaSizeInBytes,
+        quotaUsageInBytes: quotaUsageInBytes,
+      );
 
   User.fromUserDto(
     UserAdminResponseDto dto,
@@ -174,6 +190,54 @@ extension AvatarColorEnumHelper on UserAvatarColor {
     }
     return AvatarColorEnum.primary;
   }
+}
+
+extension AvatarColorEnumHelperDto on nu.UserAvatarColor {
+  AvatarColorEnum toAvatarColor() => switch (this) {
+        nu.UserAvatarColor.primary => AvatarColorEnum.primary,
+        nu.UserAvatarColor.pink => AvatarColorEnum.pink,
+        nu.UserAvatarColor.red => AvatarColorEnum.red,
+        nu.UserAvatarColor.yellow => AvatarColorEnum.yellow,
+        nu.UserAvatarColor.blue => AvatarColorEnum.blue,
+        nu.UserAvatarColor.green => AvatarColorEnum.green,
+        nu.UserAvatarColor.purple => AvatarColorEnum.purple,
+        nu.UserAvatarColor.orange => AvatarColorEnum.orange,
+        nu.UserAvatarColor.gray => AvatarColorEnum.gray,
+        nu.UserAvatarColor.amber => AvatarColorEnum.amber,
+      };
+}
+
+extension AvatarColorEnumHelperToDto on AvatarColorEnum {
+  nu.UserAvatarColor toAvatarColor() => switch (this) {
+        AvatarColorEnum.primary => nu.UserAvatarColor.primary,
+        AvatarColorEnum.pink => nu.UserAvatarColor.pink,
+        AvatarColorEnum.red => nu.UserAvatarColor.red,
+        AvatarColorEnum.yellow => nu.UserAvatarColor.yellow,
+        AvatarColorEnum.blue => nu.UserAvatarColor.blue,
+        AvatarColorEnum.green => nu.UserAvatarColor.green,
+        AvatarColorEnum.purple => nu.UserAvatarColor.purple,
+        AvatarColorEnum.orange => nu.UserAvatarColor.orange,
+        AvatarColorEnum.gray => nu.UserAvatarColor.gray,
+        AvatarColorEnum.amber => nu.UserAvatarColor.amber,
+      };
+}
+
+extension ToOldEntity on nu.UserDto {
+  User toOldEntity() => User(
+        id: id,
+        updatedAt: updatedAt,
+        email: email,
+        name: name,
+        isAdmin: isAdmin,
+        isPartnerSharedBy: isPartnerSharedBy,
+        isPartnerSharedWith: isPartnerSharedWith,
+        profileImagePath: profileImagePath,
+        avatarColor: avatarColor.toAvatarColor(),
+        memoryEnabled: memoryEnabled,
+        inTimeline: inTimeline,
+        quotaUsageInBytes: quotaUsageInBytes,
+        quotaSizeInBytes: quotaSizeInBytes,
+      );
 }
 
 extension AvatarColorToColorHelper on AvatarColorEnum {

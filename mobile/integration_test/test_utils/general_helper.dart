@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
+import 'package:immich_mobile/main.dart' as app;
 import 'package:immich_mobile/providers/db.provider.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:isar/isar.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meta/meta.dart';
-import 'package:immich_mobile/main.dart' as app;
 
 import 'login_helper.dart';
 
@@ -39,7 +39,7 @@ class ImmichTestHelper {
     await EasyLocalization.ensureInitialized();
     // Clear all data from Isar (reuse existing instance if available)
     final db = Isar.getInstance() ?? await app.loadDb();
-    await Store.clear();
+    await Store.I.clear();
     await db.writeTxn(() => db.clear());
     // Load main Widget
     await tester.pumpWidget(

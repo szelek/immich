@@ -1,32 +1,36 @@
 import 'dart:async';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/dtos/user.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/entities/user.entity.dart';
 import 'package:immich_mobile/providers/api.provider.dart';
 import 'package:immich_mobile/providers/db.provider.dart';
+import 'package:immich_mobile/repositories/user.repository.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:isar/isar.dart';
 
 class CurrentUserProvider extends StateNotifier<User?> {
-  CurrentUserProvider(this._apiService) : super(null) {
-    state = Store.tryGet(StoreKey.currentUser);
-    streamSub =
-        Store.watch(StoreKey.currentUser).listen((user) => state = user);
+  CurrentUserProvider(this._apiService, this._ref) : super(null) {
+    state = Store.I.tryGet(StoreKey.currentUser)?.toOldEntity();
+    streamSub = Store.I
+        .watch(StoreKey.currentUser)
+        .listen((user) => state = user?.toOldEntity());
   }
 
   final ApiService _apiService;
-  late final StreamSubscription<User?> streamSub;
+  final Ref _ref;
+  late final StreamSubscription<UserDto?> streamSub;
 
   refresh() async {
     try {
-      final user = await _apiService.usersApi.getMyUser();
-      final userPreferences = await _apiService.usersApi.getMyPreferences();
-      if (user != null) {
-        Store.put(
-          StoreKey.currentUser,
-          User.fromUserDto(user, userPreferences),
-        );
+      final userDto = await _apiService.usersApi.getMyUser();
+      if (userDto != null) {
+        final userPreferences = await _apiService.usersApi.getMyPreferences();
+        final user = User.fromUserDto(userDto, userPreferences);
+        await _ref.read(userRepositoryProvider).update(user);
+        await Store.I.put(StoreKey.currentUser, user.toDTO());
       }
     } catch (_) {}
   }
@@ -40,9 +44,7 @@ class CurrentUserProvider extends StateNotifier<User?> {
 
 final currentUserProvider =
     StateNotifierProvider<CurrentUserProvider, User?>((ref) {
-  return CurrentUserProvider(
-    ref.watch(apiServiceProvider),
-  );
+  return CurrentUserProvider(ref.watch(apiServiceProvider), ref);
 });
 
 class TimelineUserIdsProvider extends StateNotifier<List<int>> {
@@ -51,7 +53,7 @@ class TimelineUserIdsProvider extends StateNotifier<List<int>> {
         .filter()
         .inTimelineEqualTo(true)
         .or()
-        .isarIdEqualTo(currentUser?.isarId ?? Isar.autoIncrement)
+        .idEqualTo(currentUser?.id ?? '')
         .isarIdProperty();
     query.findAll().then((users) => state = users);
     streamSub = query.watch().listen((users) => state = users);

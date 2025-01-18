@@ -1,5 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/entities/user.entity.dart';
 import 'package:immich_mobile/interfaces/user.interface.dart';
 import 'package:immich_mobile/providers/db.provider.dart';
@@ -22,9 +23,9 @@ class UserRepository extends DatabaseRepository implements IUserRepository {
   @override
   Future<List<User>> getAll({bool self = true, UserSort? sortBy}) {
     final baseQuery = db.users.where();
-    final int userId = Store.get(StoreKey.currentUser).isarId;
+    final String userId = Store.I.get(StoreKey.currentUser).id;
     final QueryBuilder<User, User, QAfterWhereClause> afterWhere =
-        self ? baseQuery.noOp() : baseQuery.isarIdNotEqualTo(userId);
+        self ? baseQuery.noOp() : baseQuery.idNotEqualTo(userId);
     final QueryBuilder<User, User, QAfterSortBy> query;
     switch (sortBy) {
       case null:
@@ -42,7 +43,8 @@ class UserRepository extends DatabaseRepository implements IUserRepository {
   }
 
   @override
-  Future<User> me() => Future.value(Store.get(StoreKey.currentUser));
+  Future<User> me() =>
+      Future.value(Store.I.get(StoreKey.currentUser).toOldEntity());
 
   @override
   Future<void> deleteById(List<int> ids) => txn(() => db.users.deleteAll(ids));
@@ -58,6 +60,6 @@ class UserRepository extends DatabaseRepository implements IUserRepository {
       .filter()
       .isPartnerSharedWithEqualTo(true)
       .or()
-      .isarIdEqualTo(Store.get(StoreKey.currentUser).isarId)
+      .idEqualTo(Store.I.get(StoreKey.currentUser).id)
       .findAll();
 }

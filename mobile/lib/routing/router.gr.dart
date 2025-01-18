@@ -136,15 +136,10 @@ class AlbumAssetSelectionRouteArgs {
 
 /// generated route for
 /// [AlbumOptionsPage]
-class AlbumOptionsRoute extends PageRouteInfo<AlbumOptionsRouteArgs> {
-  AlbumOptionsRoute({
-    Key? key,
-    List<PageRouteInfo>? children,
-  }) : super(
+class AlbumOptionsRoute extends PageRouteInfo<void> {
+  const AlbumOptionsRoute({List<PageRouteInfo>? children})
+      : super(
           AlbumOptionsRoute.name,
-          args: AlbumOptionsRouteArgs(
-            key: key,
-          ),
           initialChildren: children,
         );
 
@@ -153,23 +148,9 @@ class AlbumOptionsRoute extends PageRouteInfo<AlbumOptionsRouteArgs> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<AlbumOptionsRouteArgs>();
-      return AlbumOptionsPage(
-        key: args.key,
-      );
+      return const AlbumOptionsPage();
     },
   );
-}
-
-class AlbumOptionsRouteArgs {
-  const AlbumOptionsRouteArgs({this.key});
-
-  final Key? key;
-
-  @override
-  String toString() {
-    return 'AlbumOptionsRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for

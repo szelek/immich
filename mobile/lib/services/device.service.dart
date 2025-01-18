@@ -1,6 +1,7 @@
 import 'package:flutter_udid/flutter_udid.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 
 final deviceServiceProvider = Provider((ref) => DeviceService());
 
@@ -19,6 +20,6 @@ class DeviceService {
   ///
   /// Returns a [String] representing the device's unique identifier.
   String getDeviceId() {
-    return Store.tryGet(StoreKey.deviceId) ?? createDeviceId();
+    return Store.I.tryGet(StoreKey.deviceId) ?? createDeviceId();
   }
 }

@@ -1,4 +1,5 @@
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 
 String sanitizeUrl(String url) {
   // Add schema if none is set
@@ -10,7 +11,7 @@ String sanitizeUrl(String url) {
 }
 
 String? getServerUrl() {
-  final serverUrl = Store.tryGet(StoreKey.serverEndpoint);
+  final serverUrl = Store.I.tryGet(StoreKey.serverEndpoint);
   final serverUri = serverUrl != null ? Uri.tryParse(serverUrl) : null;
   if (serverUri == null) {
     return null;

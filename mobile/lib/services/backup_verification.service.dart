@@ -5,9 +5,10 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/entities/asset.entity.dart';
 import 'package:immich_mobile/entities/exif_info.entity.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/interfaces/asset.interface.dart';
 import 'package:immich_mobile/interfaces/exif_info.interface.dart';
 import 'package:immich_mobile/interfaces/file_media.interface.dart';
@@ -31,7 +32,7 @@ class BackupVerificationService {
 
   /// Returns at most [limit] assets that were backed up without exif
   Future<List<Asset>> findWronglyBackedUpAssets({int limit = 100}) async {
-    final owner = Store.get(StoreKey.currentUser).isarId;
+    final owner = Store.I.get(StoreKey.currentUser).dbId;
     final List<Asset> onlyLocal = await _assetRepository.getAll(
       ownerId: owner,
       state: AssetState.local,
@@ -75,8 +76,8 @@ class BackupVerificationService {
         (
           deleteCandidates: deleteCandidates.slice(0, half),
           originals: originals.slice(0, half),
-          auth: Store.get(StoreKey.accessToken),
-          endpoint: Store.get(StoreKey.serverEndpoint),
+          auth: Store.I.get(StoreKey.accessToken),
+          endpoint: Store.I.get(StoreKey.serverEndpoint),
           rootIsolateToken: isolateToken,
           fileMediaRepository: _fileMediaRepository,
         ),
@@ -86,8 +87,8 @@ class BackupVerificationService {
         (
           deleteCandidates: deleteCandidates.slice(half),
           originals: originals.slice(half),
-          auth: Store.get(StoreKey.accessToken),
-          endpoint: Store.get(StoreKey.serverEndpoint),
+          auth: Store.I.get(StoreKey.accessToken),
+          endpoint: Store.I.get(StoreKey.serverEndpoint),
           rootIsolateToken: isolateToken,
           fileMediaRepository: _fileMediaRepository,
         ),
@@ -99,8 +100,8 @@ class BackupVerificationService {
         (
           deleteCandidates: deleteCandidates,
           originals: originals,
-          auth: Store.get(StoreKey.accessToken),
-          endpoint: Store.get(StoreKey.serverEndpoint),
+          auth: Store.I.get(StoreKey.accessToken),
+          endpoint: Store.I.get(StoreKey.serverEndpoint),
           rootIsolateToken: isolateToken,
           fileMediaRepository: _fileMediaRepository,
         ),

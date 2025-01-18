@@ -1,10 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/domain/repositories/store.repository.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/models/auth/auxilary_endpoint.model.dart';
 import 'package:immich_mobile/services/auth.service.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:openapi/api.dart';
+
 import '../repository.mocks.dart';
 import '../service.mocks.dart';
 import '../test_utils.dart';
@@ -37,7 +39,7 @@ void main() {
       WidgetsFlutterBinding.ensureInitialized();
       final db = await TestUtils.initIsar();
       db.writeTxnSync(() => db.clearSync());
-      Store.init(db);
+      await Store.init(StoreRepository(db: db));
     });
 
     test('Should resolve HTTP endpoint', () async {

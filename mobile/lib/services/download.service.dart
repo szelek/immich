@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/entities/asset.entity.dart';
 import 'package:immich_mobile/interfaces/download.interface.dart';
 import 'package:immich_mobile/interfaces/file_media.interface.dart';
@@ -203,7 +204,7 @@ class DownloadService {
     String? metadata,
   }) {
     final path = r'/assets/{id}/original'.replaceAll('{id}', id);
-    final serverEndpoint = Store.get(StoreKey.serverEndpoint);
+    final serverEndpoint = Store.I.get(StoreKey.serverEndpoint);
     final headers = ApiService.getRequestHeaders();
 
     return DownloadTask(

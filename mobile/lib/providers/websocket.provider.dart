@@ -4,11 +4,12 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/providers/auth.provider.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/entities/asset.entity.dart';
 import 'package:immich_mobile/models/server_info/server_version.model.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/providers/asset.provider.dart';
+import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/db.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
@@ -107,7 +108,7 @@ class WebsocketNotifier extends StateNotifier<WebsocketState> {
 
     if (authenticationState.isAuthenticated) {
       try {
-        final endpoint = Uri.parse(Store.get(StoreKey.serverEndpoint));
+        final endpoint = Uri.parse(Store.I.get(StoreKey.serverEndpoint));
         final headers = ApiService.getRequestHeaders();
         if (endpoint.userInfo.isNotEmpty) {
           headers["Authorization"] =

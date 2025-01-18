@@ -1,7 +1,8 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/entities/album.entity.dart';
 import 'package:immich_mobile/entities/asset.entity.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/entities/user.entity.dart';
 import 'package:immich_mobile/interfaces/album.interface.dart';
 import 'package:immich_mobile/models/albums/album_search.model.dart';
@@ -57,7 +58,7 @@ class AlbumRepository extends DatabaseRepository implements IAlbumRepository {
   Future<List<Album>> getAll({
     bool? shared,
     bool? remote,
-    int? ownerId,
+    String? ownerId,
     AlbumSort? sortBy,
   }) {
     final baseQuery = db.albums.where();
@@ -75,7 +76,7 @@ class AlbumRepository extends DatabaseRepository implements IAlbumRepository {
       filterQuery = filterQuery.sharedEqualTo(true);
     }
     if (ownerId != null) {
-      filterQuery = filterQuery.owner((q) => q.isarIdEqualTo(ownerId));
+      filterQuery = filterQuery.owner((q) => q.idEqualTo(ownerId));
     }
     final QueryBuilder<Album, Album, QAfterSortBy> query;
     switch (sortBy) {
@@ -134,12 +135,12 @@ class AlbumRepository extends DatabaseRepository implements IAlbumRepository {
     switch (filterMode) {
       case QuickFilterMode.sharedWithMe:
         query = query.owner(
-          (q) => q.not().isarIdEqualTo(Store.get(StoreKey.currentUser).isarId),
+          (q) => q.not().idEqualTo(Store.I.get(StoreKey.currentUser).id),
         );
         break;
       case QuickFilterMode.myAlbums:
         query = query.owner(
-          (q) => q.isarIdEqualTo(Store.get(StoreKey.currentUser).isarId),
+          (q) => q.idEqualTo(Store.I.get(StoreKey.currentUser).id),
         );
         break;
       case QuickFilterMode.all:

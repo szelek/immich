@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/interfaces/auth.interface.dart';
 import 'package:immich_mobile/interfaces/auth_api.interface.dart';
 import 'package:immich_mobile/models/auth/auxilary_endpoint.model.dart';
@@ -50,7 +51,7 @@ class AuthService {
   Future<String> validateServerUrl(String url) async {
     final validUrl = await _apiService.resolveAndSetEndpoint(url);
     await _apiService.setDeviceInfoHeader();
-    Store.put(StoreKey.serverUrl, validUrl);
+    Store.I.put(StoreKey.serverUrl, validUrl);
 
     return validUrl;
   }
@@ -117,13 +118,13 @@ class AuthService {
   Future<void> clearLocalData() {
     return Future.wait([
       _authRepository.clearLocalData(),
-      Store.delete(StoreKey.currentUser),
-      Store.delete(StoreKey.accessToken),
-      Store.delete(StoreKey.assetETag),
-      Store.delete(StoreKey.autoEndpointSwitching),
-      Store.delete(StoreKey.preferredWifiName),
-      Store.delete(StoreKey.localEndpoint),
-      Store.delete(StoreKey.externalEndpointList),
+      Store.I.delete(StoreKey.currentUser),
+      Store.I.delete(StoreKey.accessToken),
+      Store.I.delete(StoreKey.assetETag),
+      Store.I.delete(StoreKey.autoEndpointSwitching),
+      Store.I.delete(StoreKey.preferredWifiName),
+      Store.I.delete(StoreKey.localEndpoint),
+      Store.I.delete(StoreKey.externalEndpointList),
     ]);
   }
 

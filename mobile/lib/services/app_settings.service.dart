@@ -1,5 +1,6 @@
 import 'package:immich_mobile/constants/colors.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 
 enum AppSettingsEnum<T> {
   loadPreview<bool>(StoreKey.loadPreview, "loadPreview", true),
@@ -94,10 +95,10 @@ enum AppSettingsEnum<T> {
 
 class AppSettingsService {
   T getSetting<T>(AppSettingsEnum<T> setting) {
-    return Store.get(setting.storeKey, setting.defaultValue);
+    return Store.I.get(setting.storeKey, setting.defaultValue);
   }
 
   void setSetting<T>(AppSettingsEnum<T> setting, T value) {
-    Store.put(setting.storeKey, value);
+    Store.I.put(setting.storeKey, value);
   }
 }

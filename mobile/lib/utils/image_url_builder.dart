@@ -1,7 +1,8 @@
 import 'package:immich_mobile/constants/constants.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/entities/album.entity.dart';
 import 'package:immich_mobile/entities/asset.entity.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:openapi/api.dart';
 
 String getThumbnailUrl(
@@ -56,7 +57,7 @@ String getAlbumThumbNailCacheKey(
 }
 
 String getOriginalUrlForRemoteId(final String id) {
-  return '${Store.get(StoreKey.serverEndpoint)}/assets/$id/original';
+  return '${Store.I.get(StoreKey.serverEndpoint)}/assets/$id/original';
 }
 
 String getImageCacheKey(final Asset asset) {
@@ -69,9 +70,9 @@ String getThumbnailUrlForRemoteId(
   final String id, {
   AssetMediaSize type = AssetMediaSize.thumbnail,
 }) {
-  return '${Store.get(StoreKey.serverEndpoint)}/assets/$id/thumbnail?size=${type.value}';
+  return '${Store.I.get(StoreKey.serverEndpoint)}/assets/$id/thumbnail?size=${type.value}';
 }
 
 String getFaceThumbnailUrl(final String personId) {
-  return '${Store.get(StoreKey.serverEndpoint)}/people/$personId/thumbnail';
+  return '${Store.I.get(StoreKey.serverEndpoint)}/people/$personId/thumbnail';
 }

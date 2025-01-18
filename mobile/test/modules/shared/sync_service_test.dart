@@ -1,8 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/repositories/store.repository.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/entities/asset.entity.dart';
 import 'package:immich_mobile/entities/etag.entity.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/entities/user.entity.dart';
 import 'package:immich_mobile/interfaces/asset.interface.dart';
 import 'package:immich_mobile/interfaces/user.interface.dart';
@@ -65,8 +67,8 @@ void main() {
       final db = await TestUtils.initIsar();
       ImmichLogger();
       db.writeTxnSync(() => db.clearSync());
-      Store.init(db);
-      await Store.put(StoreKey.currentUser, owner);
+      await Store.init(StoreRepository(db: db));
+      await Store.I.put(StoreKey.currentUser, owner.toDTO());
     });
     final List<Asset> initialAssets = [
       makeAsset(checksum: "a", remoteId: "0-1"),

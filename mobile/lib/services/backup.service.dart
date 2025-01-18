@@ -6,10 +6,11 @@ import 'package:cancellation_token_http/http.dart' as http;
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/dtos/store.dto.dart';
+import 'package:immich_mobile/domain/utils/store.dart';
 import 'package:immich_mobile/entities/album.entity.dart';
 import 'package:immich_mobile/entities/asset.entity.dart';
 import 'package:immich_mobile/entities/backup_album.entity.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/interfaces/album_media.interface.dart';
 import 'package:immich_mobile/interfaces/asset.interface.dart';
 import 'package:immich_mobile/interfaces/asset_media.interface.dart';
@@ -67,7 +68,7 @@ class BackupService {
   );
 
   Future<List<String>?> getDeviceBackupAsset() async {
-    final String deviceId = Store.get(StoreKey.deviceId);
+    final String deviceId = Store.I.get(StoreKey.deviceId);
 
     try {
       return await _apiService.assetsApi.getAllUserAssetsByDeviceId(deviceId);
@@ -191,7 +192,7 @@ class BackupService {
 
     final Set<String> existing = {};
     try {
-      final String deviceId = Store.get(StoreKey.deviceId);
+      final String deviceId = Store.I.get(StoreKey.deviceId);
       final CheckExistingAssetsResponseDto? duplicates =
           await _apiService.assetsApi.checkExistingAssets(
         CheckExistingAssetsDto(
@@ -261,8 +262,8 @@ class BackupService {
     final bool isIgnoreIcloudAssets =
         _appSetting.getSetting(AppSettingsEnum.ignoreIcloudAssets);
     final shouldSyncAlbums = _appSetting.getSetting(AppSettingsEnum.syncAlbums);
-    final String deviceId = Store.get(StoreKey.deviceId);
-    final String savedEndpoint = Store.get(StoreKey.serverEndpoint);
+    final String deviceId = Store.I.get(StoreKey.deviceId);
+    final String savedEndpoint = Store.I.get(StoreKey.serverEndpoint);
     final List<String> duplicatedAssetIds = [];
     bool anyErrors = false;
 
