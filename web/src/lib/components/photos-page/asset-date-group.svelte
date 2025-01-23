@@ -179,6 +179,12 @@
             style:width={geometry.containerWidth + 'px'}
           >
             {#each dateGroup.assets as asset, i (asset.id)}
+              <!-- getting these together here in this order is very cache-efficient -->
+              {@const top = geometry.getTop(i)}
+              {@const left = geometry.getLeft(i)}
+              {@const width = geometry.getWidth(i)}
+              {@const height = geometry.getHeight(i)}
+
               <!-- update ASSET_GRID_PADDING-->
               <div
                 use:intersectionObserver={{
@@ -190,10 +196,10 @@
                 }}
                 data-asset-id={asset.id}
                 class="absolute"
-                style:width={geometry.getWidth(i) + 'px'}
-                style:height={geometry.getHeight(i) + 'px'}
-                style:top={geometry.getTop(i) + 'px'}
-                style:left={geometry.getLeft(i) + 'px'}
+                style:top={top + 'px'}
+                style:left={left + 'px'}
+                style:width={width + 'px'}
+                style:height={height + 'px'}
               >
                 <Thumbnail
                   {dateGroup}
@@ -215,8 +221,8 @@
                   selected={assetInteraction.selectedAssets.has(asset) || $assetStore.albumAssets.has(asset.id)}
                   selectionCandidate={assetInteraction.assetSelectionCandidates.has(asset)}
                   disabled={$assetStore.albumAssets.has(asset.id)}
-                  thumbnailWidth={geometry.getWidth(i)}
-                  thumbnailHeight={geometry.getHeight(i)}
+                  thumbnailWidth={width}
+                  thumbnailHeight={height}
                 />
               </div>
             {/each}
