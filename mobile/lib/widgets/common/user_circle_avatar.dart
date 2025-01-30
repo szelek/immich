@@ -29,8 +29,7 @@ class UserCircleAvatar extends ConsumerWidget {
     final profileImageUrl =
         '${Store.I.get(StoreKey.serverEndpoint)}/users/${user.id}/profile-image?d=${Random().nextInt(1024)}';
 
-    final textIcon = Text(
-      user.name[0].toUpperCase(),
+    final textIcon = DefaultTextStyle(
       style: TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 12,
@@ -38,6 +37,7 @@ class UserCircleAvatar extends ConsumerWidget {
             ? Colors.black
             : Colors.white,
       ),
+      child: Text(user.name[0].toUpperCase()),
     );
     return CircleAvatar(
       backgroundColor: user.avatarColor.toColor(),
